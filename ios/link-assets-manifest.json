@@ -1,0 +1,17 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Monday-Rain.ttf",
+      "sha1": "ea1d58ea9cda635929e0f6d050fa392dc0ac917f"
+    },
+    {
+      "path": "assets/fonts/Monday-Ramen.ttf",
+      "sha1": "68a420b16311dc3b9e9b301fc26c4314557a1586"
+    },
+    {
+      "path": "assets/fonts/Sunday-Mango.ttf",
+      "sha1": "c19bcd61dae3d5e879334c42badc2096dab33a3e"
+    }
+  ]
+}
