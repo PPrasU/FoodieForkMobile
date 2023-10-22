@@ -1,27 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, TextInput, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 import { Notification, SearchNormal, Home, TicketDiscount, ShoppingCart, Archive, User } from 'iconsax-react-native';
+import { menuData, images, } from './data';
 import { fontType } from './theme';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function App() {
-  const images = [
-    require('./assets/pictures/Promo1.jpg'),
-    require('./assets/pictures/Promo2.jpg'),
-    require('./assets/pictures/Promo3.jpg'),
-    require('./assets/pictures/Promo4.jpg'),
-    require('./assets/pictures/Promo5.jpg'),
-  ];
+  const [focusedItem, setFocusedItem] = useState(null);
 
-  const menuData = [
-    { id: '1', title: 'Paket Promo' },
-    { id: '2', title: 'Paket AYCE' },
-    { id: '3', title: 'Meat' },
-    { id: '4', title: 'Side Dish' },
-    { id: '5', title: 'Dessert' },
-  ];
+  const handleMenuItemPress = (itemId) => {
+    setFocusedItem(itemId);
+  };
 
   return (
     <View style={styles.container}>
@@ -46,7 +37,7 @@ export default function App() {
           data={images}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={( index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.imageContainer}>
               <Image
@@ -59,7 +50,7 @@ export default function App() {
         />
         <View style={styles.specialOfferContainer}>
           <Text style={styles.specialOfferText}>Special Offer</Text>
-          <TouchableOpacity onPress={handleSeeAllPress}>
+          <TouchableOpacity>
             <Text style={styles.viewAllText}>Lihat Semua </Text>
           </TouchableOpacity>
         </View>
@@ -70,34 +61,36 @@ export default function App() {
           />
           <TouchableOpacity
             style={styles.claimButton}
-            onPress={handleClaimPress}
           >
             <Text style={styles.claimButtonText}>Klaim</Text>
           </TouchableOpacity>
         </View>
+        {/* implementasi state */}
         <FlatList
-            data={menuData}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => handleMenuItemPress(item.id)}
-              >
-                <Text style={styles.menuItemText}>{item.title}</Text>
-              </TouchableOpacity>
-            )}
-          />
-           <View style={styles.menuItemImages}>
-            <Image source={require('./assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
-            
-            <Image source={require('./assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
-          </View>
-          <View style={styles.menuItemImages2}>
-            <Image source={require('./assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
-            <Image source={require('./assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
-          </View>
+          data={menuData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.menuItem,
+                focusedItem === item.id && { backgroundColor: 'lightblue' },
+              ]}
+              onPress={() => handleMenuItemPress(item.id)}
+            >
+              <Text style={[styles.menuItemText, focusedItem === item.id && { color: 'blue' }]}>{item.title}</Text>
+            </TouchableOpacity>
+          )}
+        />
+        <View style={styles.menuItemImages}>
+          <Image source={require('./assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />  
+          <Image source={require('./assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
+        </View>
+        <View style={styles.menuItemImages2}>
+          <Image source={require('./assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
+          <Image source={require('./assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
+        </View>
       </ScrollView>
 
       <View style={styles.footer}>
@@ -122,18 +115,6 @@ export default function App() {
     </View>
   );
 }
-
-const handleSeeAllPress = () => {
-  console.log("Lihat Semua button pressed");
-};
-
-const handleClaimPress = () => {
-  console.log("Klaim button pressed");
-};
-
-const handleMenuItemPress = (itemId) => {
-  console.log(`Item menu dengan ID ${itemId} ditekan.`);
-};
 
 const styles = StyleSheet.create({
   container: {
