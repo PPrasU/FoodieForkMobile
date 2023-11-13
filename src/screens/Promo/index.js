@@ -67,7 +67,7 @@ const PromoScreens = () => {
         </View>
       )}
 
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <View style={styles.footerIcon}>
           <TouchableOpacity onPress={() => handleIconPress('home')}>
             <Home size={24} color={focusedIcon === 'home' ? 'blue' : 'black'} />
@@ -95,7 +95,7 @@ const PromoScreens = () => {
             <User size={24} color={focusedIcon === 'user' ? 'blue' : 'black'} />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 }
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   claimPopup: {
     position: 'absolute',
     top: '50%', 
-    left: '69%',
+    left: '60%',
     transform: [{ translateX: -190 }, { translateY: -100 }], 
     backgroundColor: 'white',
     padding: 20,
@@ -265,30 +265,5 @@ const styles = StyleSheet.create({
     height: 200,
     marginRight: 10,
     borderRadius: 20,
-  },
-  footer: {
-    backgroundColor: '#eee',
-    padding: 20,
-    height: 60,
-    borderRadius: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  footerIcon: {
-    alignItems: 'center',
-  },
-  shoppingCartIconContainer: {
-    position: 'relative',
-  },
-  shoppingCartIcon: {
-    position: 'center',
-    top: -15,
-    backgroundColor: 'orange',
-    width: 70,
-    height: 70,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

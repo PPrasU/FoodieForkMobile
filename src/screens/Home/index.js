@@ -1,23 +1,37 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { Notification, SearchNormal, Home, TicketDiscount, ShoppingCart, Archive, User } from 'iconsax-react-native';
-import { menuData,images } from '../../../data';
+import { menuData, images, paketAYCE } from '../../../data';
 import ImagesComponent from '../../components/images';
+import {PaketAYCE} from '../../components';
 import { fontType } from '../../../theme';
+import {useNavigation} from '@react-navigation/native';
+
+const navigation = useNavigation();
+
+const ListPaketAYCE = () => {
+  const verticalData = paketAYCE.slice(0);
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.listBlog}>
+        <View style={styles.listCard}>
+          {verticalData.map((item, index) => (
+            <PaketAYCE item={item} key={index} />
+          ))}
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
 
 const HomeScreens = () => {
-  const [focusedIcon, setFocusedIcon] = useState('home'); // Initialize the focused icon
-
-  const handleIconPress = (iconName) => {
-    setFocusedIcon(iconName);
-  };
-
   const [focusedItem, setFocusedItem] = useState(null);
-
+  const [selectedMenu, setSelectedMenu] = useState(null);
   const handleMenuItemPress = (itemId) => {
     setFocusedItem(itemId);
+    setSelectedMenu(itemId);
   };
-
+  const [isClaimPopupVisible, setIsClaimPopupVisible] = useState(false);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -40,7 +54,7 @@ const HomeScreens = () => {
         <ImagesComponent images={images} />
         <View style={styles.specialOfferContainer}>
           <Text style={styles.specialOfferText}>Special Offer</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('PromoScreens')}>
             <Text style={styles.viewAllText}>Lihat Semua </Text>
           </TouchableOpacity>
         </View>
@@ -49,9 +63,7 @@ const HomeScreens = () => {
             source={require('../../../assets/pictures/Diskon40.png')}
             style={styles.specialOfferImage}
           />
-          <TouchableOpacity
-            style={styles.claimButton}
-          >
+          <TouchableOpacity style={styles.claimButton} onPress={() => setIsClaimPopupVisible(true)}>
             <Text style={styles.claimButtonText}>Klaim</Text>
           </TouchableOpacity>
         </View>
@@ -73,17 +85,22 @@ const HomeScreens = () => {
             </TouchableOpacity>
           )}
         />
-        <View style={styles.menuItemImages}>
-          <Image source={require('../../../assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />  
-          <Image source={require('../../../assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
-        </View>
-        <View style={styles.menuItemImages2}>
-          <Image source={require('../../../assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
-          <Image source={require('../../../assets/pictures/Promo1.jpg')} style={styles.menuItemImage} />
-        </View>
+        {/* {selectedMenu === '2' && <ListPaketAYCE />} */}
+        <ListPaketAYCE />
       </ScrollView>
+      {isClaimPopupVisible && (
+        <View style={styles.claimPopup}>
+          <Text style={styles.claimPopupText}>Selamat Kupon Berhasil Di Klaim</Text>
+          <TouchableOpacity
+            style={styles.closeClaimPopup}
+            onPress={() => setIsClaimPopupVisible(false)}
+          >
+            <Text style={styles.closeClaimPopupText}>Tutup</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <View style={styles.footerIcon}>
           <TouchableOpacity onPress={() => handleIconPress('home')}>
             <Home size={24} color={focusedIcon === 'home' ? 'blue' : 'black'} />
@@ -111,7 +128,7 @@ const HomeScreens = () => {
             <User size={24} color={focusedIcon === 'user' ? 'blue' : 'black'} />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 }
@@ -238,6 +255,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
   },
+  listBlog: {
+    paddingVertical: 10,
+    gap: 10,
+  },
+  listCard: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    gap: 15,
+  },
   menuItemImages: {
     marginLeft: 15,
     marginRight: 15,
@@ -258,29 +284,30 @@ const styles = StyleSheet.create({
     width: 165,
     height: 165,
   },
-  footer: {
-    backgroundColor: '#eee',
+  claimPopup: {
+    position: 'absolute',
+    top: '50%', 
+    left: '60%',
+    transform: [{ translateX: -190 }, { translateY: -100 }], 
+    backgroundColor: 'white',
     padding: 20,
-    height: 60,
-    borderRadius: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    borderRadius: 10,
   },
-  footerIcon: {
-    alignItems: 'center',
+  claimPopupText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
-  shoppingCartIconContainer: {
-    position: 'relative',
+  closeClaimPopup: {
+    marginTop: 20,
+    backgroundColor: 'red', // Warna merah
+    padding: 10,
+    borderRadius: 10,
   },
-  shoppingCartIcon: {
-    position: 'center',
-    top: -15,
-    backgroundColor: 'orange',
-    width: 70,
-    height: 70,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+  closeClaimPopupText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

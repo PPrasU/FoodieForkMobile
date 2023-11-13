@@ -1,4 +1,4 @@
-import MenuPaket1Image from '../../../assets/pictures/MenuPaket1.png';
+import MenuPaket1Image from '../../../assets/pictures/MenuPaketA.png';
 export const items = [
     {
         image: MenuPaket1Image,

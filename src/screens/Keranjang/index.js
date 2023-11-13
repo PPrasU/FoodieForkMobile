@@ -3,6 +3,9 @@ import { View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, } from 're
 import { ArrowLeft2, ArrowUp2, Notification, TicketDiscount,  } from 'iconsax-react-native';
 import { fontType } from '../../../theme';
 import { items } from './data';
+import {useNavigation} from '@react-navigation/native';
+
+const navigation = useNavigation();
 
 const KeranjangScreens = () => {
   const totalHarga = items.reduce((total, item) => total + parseFloat(item.price), 0);
@@ -14,7 +17,7 @@ const KeranjangScreens = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.arrowLeftCircle}>
+        <TouchableOpacity style={styles.arrowLeftCircle} onPress={() => navigation.navigate('HomeScreen')}>
           <ArrowLeft2 color="black" variant="Linear" />
         </TouchableOpacity>
         <View>
@@ -33,7 +36,7 @@ const KeranjangScreens = () => {
             <Image source={item.image} style={styles.image} />
             <Text style={styles.boxTextTitle}>{item.title}</Text>
             <Text style={styles.boxSubText}>{item.subText}</Text>
-            <Text style={styles.boxTextPrice}>Rp{item.price}</Text>
+            <Text style={styles.boxTextPrice}>Rp.{item.price}</Text>
           </View>
         ))}
       </ScrollView>
