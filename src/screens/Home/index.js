@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
-import { View, StyleSheet, Text, Image, ScrollView, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { Notification, SearchNormal, Home, TicketDiscount, ShoppingCart, Archive, User } from 'iconsax-react-native';
+import React, {useState, useRef} from 'react';
+import { View, StyleSheet, Text, Image, ScrollView, TextInput, FlatList, TouchableOpacity, Animated } from 'react-native';
+import { Notification, SearchNormal } from 'iconsax-react-native';
 import { menuData, images, paketAYCE } from '../../../data';
 import ImagesComponent from '../../components/images';
 import {PaketAYCE} from '../../components';
@@ -10,6 +10,7 @@ import {useNavigation} from '@react-navigation/native';
 const navigation = useNavigation();
 
 const ListPaketAYCE = () => {
+  const scrollY = useRef(new Animated.Value(0)).current;
   const verticalData = paketAYCE.slice(0);
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -32,25 +33,59 @@ const HomeScreens = () => {
     setSelectedMenu(itemId);
   };
   const [isClaimPopupVisible, setIsClaimPopupVisible] = useState(false);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [70, 10],
+    extrapolate: 'clamp',
+  });
+  const flatListPosition = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [0, -30],
+    extrapolate: 'clamp',
+  });
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <Animated.View style={[styles.header, { height: headerHeight }]}>
         <View style={styles.searchBar}>
           <SearchNormal color="black" variant="Linear" style={styles.SearchNormal} />
-          <TextInput
-            placeholder="Cari...."
-            placeholderTextColor="black"
-            style={styles.input}
-          />
+          <TextInput placeholder="Cari...." placeholderTextColor="black" style={styles.input} />
         </View>
         <View style={styles.notifIcon}>
           <TouchableOpacity style={styles.notifCircle}>
             <Notification size={30} color="black" variant="Linear" />
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
 
-      <ScrollView contentContainerStyle={styles.mainContent}>
+      <Animated.View style={{ marginTop: flatListPosition }}>
+        <FlatList
+          data={menuData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.menuItem,
+                focusedItem === item.id && { backgroundColor: 'lightblue' },
+              ]}
+              onPress={() => handleMenuItemPress(item.id)}
+            >
+              <Text style={[styles.menuItemText, focusedItem === item.id && { color: 'blue' }]}>
+                {item.title}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </Animated.View>
+
+      <ScrollView contentContainerStyle={styles.mainContent} showsVerticalScrollIndicator={false}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+          useNativeDriver: false,
+        })}
+        scrollEventThrottle={16}
+      >
         <ImagesComponent images={images} />
         <View style={styles.specialOfferContainer}>
           <Text style={styles.specialOfferText}>Special Offer</Text>
@@ -67,24 +102,6 @@ const HomeScreens = () => {
             <Text style={styles.claimButtonText}>Klaim</Text>
           </TouchableOpacity>
         </View>
-        {/* implementasi state */}
-        <FlatList
-          data={menuData}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.menuItem,
-                focusedItem === item.id && { backgroundColor: 'lightblue' },
-              ]}
-              onPress={() => handleMenuItemPress(item.id)}
-            >
-              <Text style={[styles.menuItemText, focusedItem === item.id && { color: 'blue' }]}>{item.title}</Text>
-            </TouchableOpacity>
-          )}
-        />
         {/* {selectedMenu === '2' && <ListPaketAYCE />} */}
         <ListPaketAYCE />
       </ScrollView>
@@ -99,36 +116,6 @@ const HomeScreens = () => {
           </TouchableOpacity>
         </View>
       )}
-
-      {/* <View style={styles.footer}>
-        <View style={styles.footerIcon}>
-          <TouchableOpacity onPress={() => handleIconPress('home')}>
-            <Home size={24} color={focusedIcon === 'home' ? 'blue' : 'black'} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.footerIcon}>
-          <TouchableOpacity onPress={() => handleIconPress('ticketDiscount')}>
-            <TicketDiscount size={24} color={focusedIcon === 'ticketDiscount' ? 'blue' : 'black'} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.shoppingCartIconContainer}>
-          <TouchableOpacity onPress={() => handleIconPress('shoppingCart')}>
-            <View style={styles.shoppingCartIcon}>
-              <ShoppingCart size={24} color={focusedIcon === 'shoppingCart' ? 'blue' : 'black'} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.footerIcon}>
-          <TouchableOpacity onPress={() => handleIconPress('archive')}>
-            <Archive size={24} color={focusedIcon === 'archive' ? 'blue' : 'black'} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.footerIcon}>
-          <TouchableOpacity onPress={() => handleIconPress('user')}>
-            <User size={24} color={focusedIcon === 'user' ? 'blue' : 'black'} />
-          </TouchableOpacity>
-        </View>
-      </View> */}
     </View>
   );
 }
@@ -247,13 +234,14 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 5,
     minWidth: 100,
-    height: 40,
+    height: 50,
   },
   menuItemText: {
     fontFamily: fontType['Monday-Ramen'],
     color: 'black',
     fontSize: 15,
     textAlign: 'center',
+    marginTop: 5,
   },
   listBlog: {
     paddingVertical: 10,
@@ -263,22 +251,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 10,
     gap: 15,
-  },
-  menuItemImages: {
-    marginLeft: 15,
-    marginRight: 15,
-    padding: 15,
-    backgroundColor: "#eee",
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  menuItemImages2: {
-    marginLeft: 15,
-    marginRight: 15,
-    padding: 15,
-    backgroundColor: "#eee",
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   menuItemImage: {
     width: 165,

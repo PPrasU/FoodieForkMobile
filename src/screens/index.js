@@ -3,5 +3,5 @@ import KeranjangScreens from "./Keranjang"
 // import ProfileScreens from "./Profile"
 import PromoScreens from "./Promo"
 // import RiwayatTransaksiScreens from "./RiwayatTransaksi"
-import BlogDetail from "./BlogDetail"
-export {HomeScreens, KeranjangScreens, PromoScreens, BlogDetail}
+import MenuPaketDetail from "./MenuPaketDetail"
+export {HomeScreens, KeranjangScreens, PromoScreens, MenuPaketDetail}

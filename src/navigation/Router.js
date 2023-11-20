@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet} from 'react-native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreens, KeranjangScreens, PromoScreens, ProfileScreen, RiwayatTransaksiScreens, BlogDetail } from '../screens/index';
+import { HomeScreens, KeranjangScreens, PromoScreens, ProfileScreen, RiwayatTransaksiScreens, MenuPaketDetail } from '../screens/index';
 import { Home2, TicketDiscount, ShoppingCart, Archive, User } from 'iconsax-react-native';
 
 const Tab = createBottomTabNavigator();
@@ -139,8 +139,8 @@ const Router = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="BlogDetail"
-        component={BlogDetail}
+        name="MenuPaketDetail"
+        component={MenuPaketDetail}
         options={{
           headerShown: false, 
           animationEnabled: true,

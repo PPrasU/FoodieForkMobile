@@ -4,22 +4,10 @@ import {ArrowLeft, Like1, Receipt21, Message, Share, More, ShoppingCart} from 'i
 import {useNavigation} from '@react-navigation/native';
 import {paketAYCE} from '../../../data';
 import FastImage from 'react-native-fast-image';
-const formatNumber = number => {
-  if (number >= 1000000000) {
-    return (number / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
-  }
-  if (number >= 1000000) {
-    return (number / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-  }
-  if (number >= 1000) {
-    return (number / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-  }
-  return number.toString();
-};
-const BlogDetail = ({route}) => {
+
+const MenuPaketAYCE = ({route}) => {
   const {blogId} = route.params;
   const [iconStates, setIconStates] = useState({
-    liked: {variant: 'Linear', color: "#454545"},
     bookmarked: {variant: 'Linear', color: "#454545"},
   });
   const selectedBlog = paketAYCE.find(blog => blog.id === blogId);
@@ -46,14 +34,6 @@ const BlogDetail = ({route}) => {
             size={24}
           />
         </TouchableOpacity>
-        <View style={{flexDirection: 'row', justifyContent: 'center', gap: 20}}>
-          <Share color="#454545" variant="Linear" size={24} />
-          <More
-            color="#454545"
-            variant="Linear"
-            style={{transform: [{rotate: '90deg'}]}}
-          />
-        </View>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -80,24 +60,6 @@ const BlogDetail = ({route}) => {
         <Text style={styles.content}>{selectedBlog.content}</Text>
       </ScrollView>
       <View style={styles.bottomBar}>
-        <View style={{flexDirection:'row', gap:5, alignItems:'center'}}>
-          <TouchableOpacity onPress={() => toggleIcon('liked')}>
-            <Like1
-              color={iconStates.liked.color}
-              variant={iconStates.liked.variant}
-              size={24}
-            />
-          </TouchableOpacity>
-          <Text style={styles.info}>
-            {formatNumber(selectedBlog.totalLikes)}
-          </Text>
-        </View>
-        <View style={{flexDirection:'row', gap:5, alignItems:'center'}}>
-        <Message color="#454545" variant="Linear" size={24} />
-        <Text style={styles.info}>
-          {formatNumber(selectedBlog.totalComments)}
-        </Text>
-        </View>
         <TouchableOpacity onPress={() => toggleIcon('bookmarked')}>
           <Receipt21
             color={iconStates.bookmarked.color}
@@ -116,7 +78,7 @@ const BlogDetail = ({route}) => {
     </View>
   );
 };
-export default BlogDetail;
+export default MenuPaketAYCE;
 const styles = StyleSheet.create({
   container: {
     flex: 1,

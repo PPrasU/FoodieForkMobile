@@ -14,7 +14,7 @@ const PaketAYCE = ({item}) => {
     setIsLiked(!isLiked);
   };
   return (
-    <TouchableOpacity style={styles.cardItem} onPress={() => navigation.navigate('BlogDetail', {blogId: item.id})}>
+    <TouchableOpacity style={styles.cardItem} onPress={() => navigation.navigate('MenuPaketDetail', {blogId: item.id})}>
       <FastImage
         style={styles.cardImage}
         source={item.image}
