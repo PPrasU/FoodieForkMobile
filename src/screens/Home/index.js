@@ -1,20 +1,17 @@
 import React, {useState, useRef} from 'react';
-import { View, StyleSheet, Text, Image, ScrollView, TextInput, FlatList, TouchableOpacity, Animated } from 'react-native';
-import { Notification, SearchNormal } from 'iconsax-react-native';
+import { View, StyleSheet, Text, Image, ScrollView, FlatList, TouchableWithoutFeedback, TouchableOpacity, Animated } from 'react-native';
+import { Notification, SearchNormal1 } from 'iconsax-react-native';
 import { menuData, images, paketAYCE } from '../../../data';
 import ImagesComponent from '../../components/images';
 import {PaketAYCE} from '../../components';
 import { fontType } from '../../../theme';
 import {useNavigation} from '@react-navigation/native';
 
-const navigation = useNavigation();
-
 const ListPaketAYCE = () => {
-  const scrollY = useRef(new Animated.Value(0)).current;
   const verticalData = paketAYCE.slice(0);
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.listBlog}>
+      <View style={styles.listMenu}>
         <View style={styles.listCard}>
           {verticalData.map((item, index) => (
             <PaketAYCE item={item} key={index} />
@@ -26,6 +23,7 @@ const ListPaketAYCE = () => {
 };
 
 const HomeScreens = () => {
+  const navigation = useNavigation();
   const [focusedItem, setFocusedItem] = useState(null);
   const [selectedMenu, setSelectedMenu] = useState(null);
   const handleMenuItemPress = (itemId) => {
@@ -47,10 +45,12 @@ const HomeScreens = () => {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.header, { height: headerHeight }]}>
-        <View style={styles.searchBar}>
-          <SearchNormal color="black" variant="Linear" style={styles.SearchNormal} />
-          <TextInput placeholder="Cari...." placeholderTextColor="black" style={styles.input} />
-        </View>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate ("Search") }>
+          <View style={styles.searchBar}>
+            <SearchNormal1 color="black" variant="Linear" style={styles.SearchNormal} />
+            <Text style={styles.input}>Cari ... </Text>
+          </View>
+        </TouchableWithoutFeedback>
         <View style={styles.notifIcon}>
           <TouchableOpacity style={styles.notifCircle}>
             <Notification size={30} color="black" variant="Linear" />
@@ -79,7 +79,6 @@ const HomeScreens = () => {
           )}
         />
       </Animated.View>
-
       <ScrollView contentContainerStyle={styles.mainContent} showsVerticalScrollIndicator={false}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
           useNativeDriver: false,
@@ -87,6 +86,28 @@ const HomeScreens = () => {
         scrollEventThrottle={16}
       >
         <ImagesComponent images={images} />
+        <View style={styles.ratingContainer}>
+          <Text style={styles.ratingText}>Penilaian</Text>
+          <View style={styles.ratingContent}>
+            <View style={styles.ratingInfo}>
+              <Image
+                source={require('../../../assets/pictures/MenuPaketA.png')}
+                style={styles.ratingPic}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.idPesanan}>#P54844PP</Text>
+                <Text style={styles.tanggalPesanan}>11-November-2023</Text>
+                <Text style={styles.hargaText}>Rp.189.000</Text>
+              </View>
+            </View>
+            <Text style={styles.paketPromoText}>Paket Promo A</Text>
+          </View>
+          <TouchableOpacity onPress={() => navigation.navigate ("Form")} style={[styles.nilaiPesananButton, focusedItem === 'nilaiPesanan' && { backgroundColor: 'lightblue' },]}>
+            <Text style={[styles.menuItemText, focusedItem === 'nilaiPesanan' && { color: 'blue' }]}>
+              Nilai Pesanan
+            </Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.specialOfferContainer}>
           <Text style={styles.specialOfferText}>Special Offer</Text>
           <TouchableOpacity onPress={() => navigation.navigate('PromoScreens')}>
@@ -171,6 +192,79 @@ const styles = StyleSheet.create({
   mainContent: {
     flexGrow: 1,
   },
+  ratingContainer: {
+    backgroundColor: '#eee',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 20,
+  },
+  ratingText: {
+    fontFamily: fontType['Monday-Ramen'],
+    fontSize: 22,
+    color: 'black',
+    marginLeft: 5,
+  },
+  ratingContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginTop: 10,
+    marginLeft: 5,
+  },
+  ratingInfo: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  ratingPic: {
+    backgroundColor: '#eee',
+    borderRadius: 10,
+    padding: 10,
+    width: 120, 
+    height: 120,
+  },
+  textContainer: {
+    marginLeft: 10,
+    alignItems: 'flex-start',
+  },
+  idPesanan: {
+    fontSize: 14,
+    color: 'black',
+    marginTop: 5,
+  },
+  tanggalPesanan: {
+    fontSize: 14,
+    color: 'black',
+    marginRight: 10,
+    marginTop: 10,
+  },
+  hargaText: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'right', 
+    marginTop: 50,
+    marginLeft: 155,
+  },
+  paketPromoText: {
+    fontSize: 14,
+    color: 'black',
+    marginTop: 5,
+    marginLeft: -130,
+  },
+  nilaiPesananButton: {
+    marginTop: 10,
+    backgroundColor: '#eee',
+    borderRadius: 10,
+    padding: 10,
+    minWidth: 100,
+    height: 50,
+    borderColor: 'black',
+    borderWidth: 1,
+    paddingHorizontal: 10, 
+  },  
   specialOfferContainer: {
     backgroundColor: '#eee',
     borderTopLeftRadius: 20,
@@ -243,7 +337,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 5,
   },
-  listBlog: {
+  listMenu: {
     paddingVertical: 10,
     gap: 10,
   },
@@ -251,10 +345,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 10,
     gap: 15,
-  },
-  menuItemImage: {
-    width: 165,
-    height: 165,
   },
   claimPopup: {
     position: 'absolute',

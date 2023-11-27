@@ -2,8 +2,8 @@ import React from 'react';
 import { View, StyleSheet} from 'react-native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreens, KeranjangScreens, PromoScreens, ProfileScreen, RiwayatTransaksiScreens, MenuPaketDetail } from '../screens/index';
-import { Home2, TicketDiscount, ShoppingCart, Archive, User } from 'iconsax-react-native';
+import { HomeScreens, KeranjangScreens, PromoScreens, MenuPaketDetail, Search, Form } from '../screens/index';
+import { Home2, TicketDiscount, ShoppingCart,} from 'iconsax-react-native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -82,42 +82,6 @@ function MainApp() {
           headerShown: false,
         }}
       />
-      {/* <Tab.Screen
-        name="RiwayatTransaksi"
-        component={RiwayatTransaksiScreens}
-        options={{
-          tabBarLabel: 'RiwayatTransaksi',
-          tabBarIcon: ({ focused }) => (
-            <View style={{ alignItems: 'center' }}>
-              {focused && <View style={styles.line} />}
-              <Archive
-                color="#000"
-                variant={focused ? 'Bold' : 'Linear'}
-                size={24}
-              />
-            </View>
-          ),
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({ focused }) => (
-            <View style={{ alignItems: 'center' }}>
-              {focused && <View style={styles.line} />}
-              <User
-                color="#000"
-                variant={focused ? 'Bold' : 'Linear'}
-                size={24}
-              />
-            </View>
-          ),
-          headerShown: false,
-        }}
-      /> */}
     </Tab.Navigator>
   );
 }
@@ -149,6 +113,19 @@ const Router = () => {
           gestureDirection : 'horizontal',
           ...TransitionPresets.SlideFromRightIOS,
         }}
+      />
+      <Stack.Screen
+        name="Search"
+        component={Search}
+        options={{
+          headerShown: false,
+          presentation: 'transparentModal',
+        }}
+      />
+      <Stack.Screen
+        name="Form"
+        component={Form}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

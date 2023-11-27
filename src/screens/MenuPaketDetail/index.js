@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import {paketAYCE} from '../../../data';
 import FastImage from 'react-native-fast-image';
 
-const MenuPaketAYCE = ({route}) => {
+const MenuPaketDetail = ({route}) => {
   const {blogId} = route.params;
   const [iconStates, setIconStates] = useState({
     bookmarked: {variant: 'Linear', color: "#454545"},
@@ -78,7 +78,7 @@ const MenuPaketAYCE = ({route}) => {
     </View>
   );
 };
-export default MenuPaketAYCE;
+export default MenuPaketDetail;
 const styles = StyleSheet.create({
   container: {
     flex: 1,

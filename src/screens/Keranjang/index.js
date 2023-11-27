@@ -5,9 +5,10 @@ import { fontType } from '../../../theme';
 import { items } from './data';
 import {useNavigation} from '@react-navigation/native';
 
-const navigation = useNavigation();
+
 
 const KeranjangScreens = () => {
+  const navigation = useNavigation();
   const totalHarga = items.reduce((total, item) => total + parseFloat(item.price), 0);
 
   const formattedTotalHarga = new Intl.NumberFormat('id-ID', {

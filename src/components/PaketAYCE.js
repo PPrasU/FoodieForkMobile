@@ -1,6 +1,6 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Clock, Message, Like, ShoppingCart} from 'iconsax-react-native';
+import {Like, ShoppingCart} from 'iconsax-react-native';
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 
