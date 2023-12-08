@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput } from "react-native";
-import { ArrowLeft, Star1, MagicStar, Camera, Video } from "iconsax-react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, ActivityIndicator } from "react-native";
+import axios from "axios";
+import FlashMessage, { showMessage } from "react-native-flash-message";
+import { ArrowLeft } from "iconsax-react-native";
 import { fontType } from '../../../theme';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 
 const Header = () => {
@@ -13,48 +15,6 @@ const Header = () => {
     </TouchableOpacity>
   );
 };
-
-const RatingTextInput = ({ title, rating, setRating, placeholder }) => {
-  const [isStarPressed, setIsStarPressed] = useState(false);
-  return (
-    <View style={RatingStyle.ratingSection}>
-      <View style={RatingStyle.headerRating}>
-        <Text style={RatingStyle.titleRating}>{title}</Text>
-        <View style={RatingStyle.bintangRating}>
-          {[1, 2, 3, 4, 5].map((value) => (
-            <TouchableOpacity
-              key={value}
-              onPress={() => {
-                setRating(value);
-                setIsStarPressed(true);
-              }}
-            >
-              <View style={RatingStyle.ratingItem}>
-                {rating >= value ? (
-                  <MagicStar size={25} variant="Bulk" style={RatingStyle.magicStar} />
-                ) : (
-                  <Star1 size={25} style={RatingStyle.star1} />
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-      {isStarPressed && (
-        <View style={RatingStyle.textInput}>
-          <TextInput
-            style={RatingStyle.inputText}
-            placeholder={placeholder}
-            placeholderTextColor="#8a8a8a"
-            borderWidth={0}
-            underlineColorAndroid="transparent"
-          />
-        </View>
-      )}
-    </View>
-  );
-};
-
 
 const RatingStyle = StyleSheet.create({
   ratingSection: {
@@ -97,78 +57,155 @@ const RatingStyle = StyleSheet.create({
   inputText: {
     fontSize: 16,
   },
+  gambarInput:{
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    marginTop: 10,
+    marginBottom: 10, 
+  },
 })
 
 const MainContent = () => {
-  const [ratingRasa, setRatingRasa] = useState(0);
-  const [ratingPelayanan, setRatingPelayanan] = useState(0);
-  const [ratingKepuasan, setRatingKepuasan] = useState(0);
-  const [ratingKenyamanan, setRatingKenyamanan] = useState(0);
-  const [isPressed, setIsPressed] = useState(false);
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { dataPenilaian, selectedItemId } = route.params;
+  const selectedItem = dataPenilaian.find((item) => item.id === selectedItemId);
+  const [ratingData, setRatingData] = useState({
+    rasa: "",
+    pelayanan: "",
+    kepuasan: "",
+    kenyamanan: "",
+  });
+  const handleChange = (key, value) => {
+    setRatingData({
+      ...ratingData,
+      [key]: value,
+    });
+  };
+  const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const postDataToAPI = async () => {
+    setLoading(true);
+    try {
+      await axios.post('https://656475e2ceac41c0761e3a27.mockapi.io/ffmobileapp/rating', {
+          rasa: ratingData.rasa,
+          pelayanan: ratingData.pelayanan,
+          kepuasan: ratingData.kepuasan,
+          kenyamanan: ratingData.kenyamanan,
+          image,
+
+          idPesanan: selectedItem.idPesanan,
+          tanggalPesanan: selectedItem.tanggalPesanan,
+          hargaText: selectedItem.hargaText,
+          paketPromoText: selectedItem.paketPromoText,
+          gambarPesanan: selectedItem.imageMenu,
+        })
+        .then(function (response) {
+          console.log(response);
+          showMessage({
+            message: "Berhasil di nilai",
+            type: "success",
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+          showMessage({
+            message: "Terjadi kesalahan saat memasukkan data ke API",
+            type: "danger",
+          });
+        });
+      setLoading(false);
+      navigation.navigate('PenilaianScreens');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  
   return (
     <View style={styles.mainContent}>
       <Text style={styles.title}>Berikan Penilaian Anda</Text>
       <View style={styles.ratingContent}>
         <View style={styles.ratingInfo}>
           <Image
-            source={require('../../../assets/pictures/MenuPaketA.png')}
+            source={{uri: selectedItem.imageMenu}}
             style={styles.ratingPic}
           />
           <View style={styles.textContainer}>
-            <Text style={styles.idPesanan}>#P54844PP</Text>
-            <Text style={styles.tanggalPesanan}>11-November-2023</Text>
-            <Text style={styles.hargaText}>Rp.189.000</Text>
+            <Text style={styles.idPesanan}>{selectedItem.idPesanan}</Text>
+            <Text style={styles.tanggalPesanan}>{selectedItem.tanggalPesanan}</Text>
+            <Text style={styles.hargaText}>{selectedItem.hargaText}</Text>
           </View>
         </View>
-        <Text style={styles.paketPromoText}>Paket Promo A</Text>
+        <Text style={styles.paketPromoText}>{selectedItem.paketPromoText}</Text>
       </View>
       <ScrollView>
-        <RatingTextInput title="Rasa"
-          rating={ratingRasa}
-          setRating={setRatingRasa}
-          placeholder="Deskripsikan rasa dari makanan tersebut ..."
-        />
-        <RatingTextInput title="Pelayanan"
-          rating={ratingPelayanan}
-          setRating={setRatingPelayanan}
-          placeholder="Deskripsikan pelayanan yang Anda terima ..."
-        />
-        <RatingTextInput title="Kepuasan"
-          rating={ratingKepuasan}
-          setRating={setRatingKepuasan}
-          placeholder="Deskripsikan kepuasan Anda ..."
-        />
-        <RatingTextInput title="Kenyamanan"
-          rating={ratingKenyamanan}
-          setRating={setRatingKenyamanan}
-          placeholder="Deskripsikan kenyamanan tempat atau layanan ..."
-        />
-        <View style={styles.imageInput}>
-          <TouchableOpacity
-            style={styles.box}
-            onPress={() => setIsPressed(true)}
-          >
-            <Camera size="32" color="#000" variant="Broken"/>
-            <Text style={styles.text}>Tambahkan Gambar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.box}
-            onPress={() => setIsPressed(true)}
-          >
-            <Video size="32" color="#000" variant="Broken"/>
-            <Text style={styles.text}>Tambahkan Gambar</Text>
-          </TouchableOpacity>
+        <Text style={RatingStyle.titleRating}>Rasa</Text>
+        <View style={RatingStyle.textInput}>
+          <TextInput
+            placeholder="Deskripsikan rasa dari makanan tersebut ..."
+            value={ratingData.rasa}
+            onChangeText={(text) => handleChange("rasa", text)}
+            placeholderTextColor="#8a8a8a"
+            borderWidth={0}
+            underlineColorAndroid="transparent"
+          />
         </View>
-      </ScrollView>
-    </View>
-  );
-};
+        <Text style={RatingStyle.titleRating}>Pelayanan</Text>
+        <View style={RatingStyle.textInput}>
+          <TextInput
+            placeholder="Deskripsikan pelayanan dari makanan tersebut ..."
+            value={ratingData.pelayanan}
+            onChangeText={(text) => handleChange("pelayanan", text)}
+            placeholderTextColor="#8a8a8a"
+            borderWidth={0}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+        <Text style={RatingStyle.titleRating}>Kepuasan</Text>
+        <View style={RatingStyle.textInput}>
+          <TextInput
+            placeholder="Deskripsikan kepuasan dari makanan tersebut ..."
+            value={ratingData.kepuasan}
+            onChangeText={(text) => handleChange("kepuasan", text)}
+            placeholderTextColor="#8a8a8a"
+            borderWidth={0}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+        <Text style={RatingStyle.titleRating}>Kenyamanan</Text>
+        <View style={RatingStyle.textInput}>
+          <TextInput
+            placeholder="Deskripsikan kenyamanan dari makanan tersebut ..."
+            value={ratingData.kenyamanan}
+            onChangeText={(text) => handleChange("kenyamanan", text)}
+            placeholderTextColor="#8a8a8a"
+            borderWidth={0}
+            underlineColorAndroid="transparent"
+          />
+        </View>
 
-const Footer = () => {
-  return (
-    <TouchableOpacity style={styles.button}>
-      <Text style={styles.buttonText}>Nilai</Text>
-    </TouchableOpacity>
+        <Text style={RatingStyle.titleRating}>Gambar</Text>
+        <View style={RatingStyle.gambarInput}>
+          <TextInput
+            placeholder="Masukkan Link Gambar"
+            value={image}
+            onChangeText={(text) => setImage(text)}
+            placeholderTextColor="#8a8a8a"
+            borderWidth={0}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#3557e1" />
+          </View>
+        )}
+      </ScrollView>
+      <TouchableOpacity style={styles.button} onPress={() => postDataToAPI()}>
+        <Text style={styles.buttonText}>Nilai</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -177,7 +214,7 @@ const Form = () => {
     <View style={styles.container}>
       <Header />
       <MainContent />
-      <Footer />
+      <FlashMessage position="top" />
     </View>
   );
 };
@@ -283,7 +320,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#000",
   },
-
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default Form;

@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
-import {ArrowLeft, Like1, Receipt21, Message, Share, More, ShoppingCart} from 'iconsax-react-native';
+import {ArrowLeft, Receipt21, ShoppingCart} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {paketAYCE} from '../../../data';
 import FastImage from 'react-native-fast-image';
@@ -10,7 +10,7 @@ const MenuPaketDetail = ({route}) => {
   const [iconStates, setIconStates] = useState({
     bookmarked: {variant: 'Linear', color: "#454545"},
   });
-  const selectedBlog = paketAYCE.find(blog => blog.id === blogId);
+  const selectedPaket = paketAYCE.find(blog => blog.id === blogId);
   const navigation = useNavigation();
   const toggleIcon = iconName => {
     setIconStates(prevStates => ({
@@ -44,7 +44,7 @@ const MenuPaketDetail = ({route}) => {
         }}>
         <FastImage
           style={styles.image}
-          source={selectedBlog.image}
+          source={{uri: selectedPaket.image,}}
           resizeMode={FastImage.resizeMode.cover}>
         </FastImage>
         <View
@@ -53,11 +53,11 @@ const MenuPaketDetail = ({route}) => {
             justifyContent: 'space-between',
             marginTop: 15,
           }}>
-          <Text style={styles.category}>{selectedBlog.category}</Text>
-          <Text style={styles.price}>Rp.{selectedBlog.price}</Text>
+          <Text style={styles.category}>{selectedPaket.category}</Text>
+          <Text style={styles.price}>Rp.{selectedPaket.price}</Text>
         </View>
-        <Text style={styles.title}>{selectedBlog.title}</Text>
-        <Text style={styles.content}>{selectedBlog.content}</Text>
+        <Text style={styles.title}>{selectedPaket.title}</Text>
+        <Text style={styles.content}>{selectedPaket.content}</Text>
       </ScrollView>
       <View style={styles.bottomBar}>
         <TouchableOpacity onPress={() => toggleIcon('bookmarked')}>

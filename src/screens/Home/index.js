@@ -42,6 +42,48 @@ const HomeScreens = () => {
     outputRange: [0, -30],
     extrapolate: 'clamp',
   });
+  const [dataPenilaian, setDataPenilaian] = useState([
+    {
+      id: 1,
+      idPesanan: '#P12345AA',
+      tanggalPesanan: '11-Juni-2023',
+      hargaText: 'Rp.189.000',
+      paketPromoText: 'Paket Promo A',
+      imageMenu: 'https://i0.wp.com/rsud.tulungagung.go.id/wp-content/uploads/2022/02/news_20220212-5.jpeg?fit=875%2C480&ssl=1',
+    },
+    {
+      id: 2,
+      idPesanan: '#P12345AB',
+      tanggalPesanan: '02-Juli-2023',
+      hargaText: 'Rp.239.000',
+      paketPromoText: 'Paket Promo B',
+      imageMenu: 'https://cdn1-production-images-kly.akamaized.net/rIuSChJzTMJaDsP4qJYRYbyuix4=/1200x900/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/2933903/original/079585200_1570542392-69841758_696593454196310_8793473457109982348_n.jpg',
+    },
+    {
+      id: 3,
+      idPesanan: '#P12345AC',
+      tanggalPesanan: '02-Agustus-2023',
+      hargaText: 'Rp.319.000',
+      paketPromoText: 'Paket Promo C',
+      imageMenu: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3D209FUa_7BmjyKp72Sm8blkWm8FeRXymyw&usqp=CAU',
+    },
+    {
+      id: 4,
+      idPesanan: '#P12345AD',
+      tanggalPesanan: '02-September-2023',
+      hargaText: 'Rp.399.000',
+      paketPromoText: 'Paket Promo D',
+      imageMenu: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaH6d5JbHbCK71wAtWMpB_ND-sCF26VoW8Pw&usqp=CAU',
+    },
+  ]);
+  const [selectedItemData, setSelectedItemData] = useState(null);
+  const handleMenuItemPressNilaiPesanan = (itemId) => {
+    const selectedItem = dataPenilaian.find((item) => item.id === itemId);
+    setFocusedItem(itemId);
+    setSelectedMenu(itemId);
+    setSelectedItemData(selectedItem);
+    navigation.navigate('Form', { dataPenilaian, selectedItemId: itemId });
+  };
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.header, { height: headerHeight }]}>
@@ -88,25 +130,41 @@ const HomeScreens = () => {
         <ImagesComponent images={images} />
         <View style={styles.ratingContainer}>
           <Text style={styles.ratingText}>Penilaian</Text>
-          <View style={styles.ratingContent}>
-            <View style={styles.ratingInfo}>
-              <Image
-                source={require('../../../assets/pictures/MenuPaketA.png')}
-                style={styles.ratingPic}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.idPesanan}>#P54844PP</Text>
-                <Text style={styles.tanggalPesanan}>11-November-2023</Text>
-                <Text style={styles.hargaText}>Rp.189.000</Text>
+        <View style={styles.ratingContent}>
+          {dataPenilaian
+            .filter(item => item.id === 2) 
+            .map((item, index) => (
+              <View style={styles.ratingInfo} key={index}>
+                <Image
+                  source={{uri: item.imageMenu}}
+                  style={styles.ratingPic}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.idPesanan}>{item.idPesanan}</Text>
+                  <Text style={styles.tanggalPesanan}>{item.tanggalPesanan}</Text>
+                  <Text style={styles.hargaText}>{item.hargaText}</Text>
+                </View>
               </View>
-            </View>
-            <Text style={styles.paketPromoText}>Paket Promo A</Text>
-          </View>
-          <TouchableOpacity onPress={() => navigation.navigate ("Form")} style={[styles.nilaiPesananButton, focusedItem === 'nilaiPesanan' && { backgroundColor: 'lightblue' },]}>
-            <Text style={[styles.menuItemText, focusedItem === 'nilaiPesanan' && { color: 'blue' }]}>
-              Nilai Pesanan
-            </Text>
-          </TouchableOpacity>
+            ))}
+          <Text style={styles.paketPromoText}>{dataPenilaian.find(item => item.id === 2)?.paketPromoText}</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => handleMenuItemPressNilaiPesanan(2)}
+          style={[
+            styles.nilaiPesananButton,
+            focusedItem === "nilaiPesanan" && { backgroundColor: "lightblue" },
+          ]}
+        >
+          <Text
+            style={[
+              styles.menuItemText,
+              focusedItem === "nilaiPesanan" && { color: "blue" },
+            ]}
+          >
+            Nilai Pesanan
+          </Text>
+        </TouchableOpacity>
+
         </View>
         <View style={styles.specialOfferContainer}>
           <Text style={styles.specialOfferText}>Special Offer</Text>

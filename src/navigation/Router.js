@@ -2,8 +2,8 @@ import React from 'react';
 import { View, StyleSheet} from 'react-native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreens, KeranjangScreens, PromoScreens, MenuPaketDetail, Search, Form } from '../screens/index';
-import { Home2, TicketDiscount, ShoppingCart,} from 'iconsax-react-native';
+import { HomeScreens, KeranjangScreens, PromoScreens, MenuPaketDetail, Search, Form, PenilaianScreens, PenilaianDetail, EditPenilaian } from '../screens/index';
+import { Home2, TicketDiscount, ShoppingCart, DocumentText1} from 'iconsax-react-native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -46,6 +46,7 @@ function MainApp() {
           headerShown: false,
         }}
       />
+      
       <Tab.Screen
         name="PromoScreens"
         component={PromoScreens}
@@ -73,6 +74,24 @@ function MainApp() {
             <View style={{ alignItems: 'center' }}>
               {focused && <View style={styles.line} />}
               <ShoppingCart
+                color="#000"
+                variant={focused ? 'Bold' : 'Linear'}
+                size={24}
+              />
+            </View>
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="PenilaianScreens"
+        component={PenilaianScreens}
+        options={{
+          tabBarLabel: 'PenilaianScreens',
+          tabBarIcon: ({ focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && <View style={styles.line} />}
+              <DocumentText1
                 color="#000"
                 variant={focused ? 'Bold' : 'Linear'}
                 size={24}
@@ -125,6 +144,16 @@ const Router = () => {
       <Stack.Screen
         name="Form"
         component={Form}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PenilaianDetail"
+        component={PenilaianDetail}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="EditPenilaian"
+        component={EditPenilaian}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

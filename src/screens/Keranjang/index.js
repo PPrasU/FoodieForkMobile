@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, } from 'react-native';
-import { ArrowLeft2, ArrowUp2, Notification, TicketDiscount,  } from 'iconsax-react-native';
+import { Notification, TicketDiscount,  } from 'iconsax-react-native';
 import { fontType } from '../../../theme';
 import { items } from './data';
 import {useNavigation} from '@react-navigation/native';
-
-
 
 const KeranjangScreens = () => {
   const navigation = useNavigation();
@@ -18,9 +16,6 @@ const KeranjangScreens = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.arrowLeftCircle} onPress={() => navigation.navigate('HomeScreen')}>
-          <ArrowLeft2 color="black" variant="Linear" />
-        </TouchableOpacity>
         <View>
           <Text style={styles.textKeranjang}>Keranjang</Text>
         </View>
@@ -89,13 +84,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textKeranjang: {
+    marginLeft: 120,
     fontFamily: fontType['Monday-Ramen'],
     fontSize: 35,
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
   },
   notifIcon: {
     marginRight: 10,

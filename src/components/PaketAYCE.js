@@ -6,7 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 
 const navigation = useNavigation();
 
-const PaketAYCE = ({item}) => {
+const DetailPesanan = ({item}) => {
   const [isLiked, setIsLiked] = useState(false);
   const navigation = useNavigation();
 
@@ -17,7 +17,7 @@ const PaketAYCE = ({item}) => {
     <TouchableOpacity style={styles.cardItem} onPress={() => navigation.navigate('MenuPaketDetail', {blogId: item.id})}>
       <FastImage
         style={styles.cardImage}
-        source={item.image}
+        source={{ uri: item.image }}
         resizeMode={FastImage.resizeMode.cover}
       />
       <View style={styles.cardContent}>
@@ -46,7 +46,7 @@ const PaketAYCE = ({item}) => {
   );
 };
 
-export default PaketAYCE;
+export default DetailPesanan;
 const styles = StyleSheet.create({
   listCard: {
     paddingHorizontal: 24,
