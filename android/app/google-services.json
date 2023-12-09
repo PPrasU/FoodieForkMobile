@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1097457610326",
+    "project_id": "foodieforkmobile",
+    "storage_bucket": "foodieforkmobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097457610326:android:4a3da236c4abe3ccb055f7",
+        "android_client_info": {
+          "package_name": "com.ffmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4DduCYpcCAO8cQ60Nm9DqA1jmeSBCKTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

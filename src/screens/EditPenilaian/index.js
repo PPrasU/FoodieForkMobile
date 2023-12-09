@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, ActivityIndicator } from "react-native";
-import axios from "axios";
-import { ArrowLeft } from "iconsax-react-native";
+import {ArrowLeft, AddSquare, Add} from 'iconsax-react-native';
 import { fontType } from "../../../theme";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 
 const RatingStyle = StyleSheet.create({
   ratingSection: {
@@ -65,75 +66,101 @@ const EditPenilaian = ({ route }) => {
     kepuasan: "",
     kenyamanan: "",
   });
-  const [image, setImage] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getPenilaianId();
-  }, [penilaianId]);
-
-  const getPenilaianId = async () => {
-    try {
-      const response = await axios.get(
-        `https://656475e2ceac41c0761e3a27.mockapi.io/ffmobileapp/rating/${penilaianId}`
-      );
-      setRatingData({
-        rasa: response.data.rasa,
-        pelayanan: response.data.pelayanan,
-        kepuasan: response.data.kepuasan,
-        kenyamanan: response.data.kenyamanan,
-        
-        idPesanan: response.data.idPesanan,
-        tanggalPesanan: response.data.tanggalPesanan,
-        hargaText: response.data.hargaText,
-        paketPromoText: response.data.paketPromoText,
-        gambarPesanan: response.data.gambarPesanan,
-      });
-
-      setImage(response.data.image);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleChange = (key, value) => {
     setRatingData({
       ...ratingData,
       [key]: value,
     });
   };
+  const [image, setImage] = useState(null);
+  const [oldImage, setOldImage] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('rating')
+      .doc(penilaianId)
+      .onSnapshot(documentSnapshot => {
+        const ratingData = documentSnapshot.data();
+        if (ratingData) {
+          console.log('rating data: ', ratingData);
+          setRatingData({
+            rasa: ratingData.rasa,
+            pelayanan: ratingData.pelayanan,
+            kepuasan: ratingData.kepuasan,
+            kenyamanan: ratingData.kenyamanan,
+
+            idPesanan: ratingData.idPesanan,
+            tanggalPesanan: ratingData.tanggalPesanan,
+            hargaText: ratingData.hargaText,
+            paketPromoText: ratingData.paketPromoText,
+            gambarPesanan: ratingData.gambarPesanan,
+          });
+          setOldImage(ratingData.image);
+          setImage(ratingData.image);
+          setLoading(false);
+        } else {
+          console.log(`rating with ID ${penilaianId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
+  }, [penilaianId]);
+
+  const handleImagePenilaian = async () => {
+    ImagePicker.openPicker({
+      width: 1920,
+      height: 1080,
+      cropping: true,
+    })
+      .then(image => {
+        console.log(image);
+        setImage(image.path);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
   const handleUpdate = async () => {
     setLoading(true);
+    let filename = image.substring(image.lastIndexOf('/') + 1);
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+    const reference = storage().ref(`ratingimages/${filename}`);
     try {
-      await axios.put(
-        `https://656475e2ceac41c0761e3a27.mockapi.io/ffmobileapp/rating/${penilaianId}`,
-        {
-          rasa: ratingData.rasa,
-          pelayanan: ratingData.pelayanan,
-          kepuasan: ratingData.kepuasan,
-          kenyamanan: ratingData.kenyamanan,
-          image: image,
-        }
-      );
-
+      if (image !== oldImage && oldImage) {
+        const oldImageRef = storage().refFromURL(oldImage);
+        await oldImageRef.delete();
+      }
+      if (image !== oldImage) {
+        await reference.putFile(image);
+      }
+      const url = image !== oldImage ? await reference.getDownloadURL() : oldImage;
+      await firestore().collection('rating').doc(penilaianId).update({
+        rasa: ratingData.rasa,
+        pelayanan: ratingData.pelayanan,
+        kepuasan: ratingData.kepuasan,
+        kenyamanan: ratingData.kenyamanan,
+        image: url,
+      });
       setLoading(false);
-      navigation.navigate("PenilaianScreens");
-    } catch (e) {
-      console.log(e);
+      console.log('rating Updated!');
+      navigation.navigate('ratingDetail', {penilaianId});
+    } catch (error) {
+      console.log(error);
     }
   };
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.header}>
-        <ArrowLeft size={24} color="#000" />
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <ArrowLeft onPress={() => navigation.goBack()} size={24} color="#000" />
+        <Text style={styles.title}>Edit Penilaian</Text>
+      </View>
 
       <View style={styles.mainContent}>
-        <Text style={styles.title}>Berikan Penilaian Anda</Text>
-        <View style={styles.ratingContent}>
+       <View style={styles.ratingContent}>
           <View style={styles.ratingInfo}>
             <Image source={{ uri: ratingData.gambarPesanan }} style={styles.ratingPic} />
             <View style={styles.textContainer}>
@@ -190,17 +217,54 @@ const EditPenilaian = ({ route }) => {
             />
           </View>
 
-          <Text style={RatingStyle.titleRating}>Gambar</Text>
-          <View style={RatingStyle.gambarInput}>
-            <TextInput
-              placeholder="Masukkan Link Gambar"
-              value={image}
-              onChangeText={(text) => setImage(text)}
-              placeholderTextColor="#8a8a8a"
-              borderWidth={0}
-              underlineColorAndroid="transparent"
+          {image ? (
+          <View style={{position: 'relative', marginVertical: 20, marginHorizontal: 10,}}>
+            <Image
+              style={{width: '100%', height: 165, borderRadius: 5}}
+              source={{
+                uri: image,
+              }}
             />
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                top: -5,
+                right: -5,
+                backgroundColor: "#b3b3b3",
+                borderRadius: 25,
+              }}
+              onPress={() => setImage(null)}>
+              <Add
+                size={20}
+                variant="Linear"
+                color="#000"
+                style={{transform: [{rotate: '45deg'}]}}
+              />
+            </TouchableOpacity>
           </View>
+        ) : (
+          <TouchableOpacity onPress={handleImagePenilaian}>
+            <View
+              style={[
+                styles.borderImagePenilaian,
+                {
+                  gap: 10,
+                  paddingVertical: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                },
+              ]}>
+              <AddSquare color="#000" variant="Linear" size={42} />
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: "#000",
+                }}>
+                Masukkan Gambar
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
           {loading && (
             <View style={styles.loadingOverlay}>
               <ActivityIndicator size="large" color="#3557e1" />
@@ -222,10 +286,12 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   header: {
+    flexDirection: 'row',
     borderBottomWidth: 1,
     paddingHorizontal: 10,
     borderColor: "#A9A9A9",
     paddingBottom: 10,
+    alignItems: "center",
   },
   mainContent: {
     paddingHorizontal: 10,
@@ -233,9 +299,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontFamily: fontType['Monday-Ramen'],
-    marginTop: 20,
+    marginLeft: 27,
   },
   ratingContent: {
     flexDirection: 'row',
@@ -324,6 +390,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  borderImagePenilaian: {
+    borderStyle: 'dashed',
+    borderRadius: 5,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#000",
+    marginVertical: 20,
+    marginHorizontal: 10,
   },
 });
 

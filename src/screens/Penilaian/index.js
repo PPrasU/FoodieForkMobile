@@ -1,16 +1,20 @@
-import React, { useState, useCallback } from 'react';
-import {ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl, Image} from 'react-native';
-import { Notification,  } from 'iconsax-react-native';
-import { fontType } from '../../../theme';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import axios from 'axios';
+import React, {useState, useCallback, useEffect} from 'react';
+import {ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl, Image,} from 'react-native';
+import {Notification} from 'iconsax-react-native';
+import {fontType} from '../../../theme';
+import {useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
 
-const RatingBox = ({ item }) => {
+const RatingBox = ({item}) => {
   const navigation = useNavigation();
   return (
-    <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('PenilaianDetail', { penilaianId: item.id })}>
+    <TouchableOpacity
+      style={styles.box}
+      onPress={() =>
+        navigation.navigate('PenilaianDetail', {penilaianId: item.id})
+      }>
       <View style={styles.ratingInfo}>
-        <Image source={{ uri: item.gambarPesanan }} style={styles.ratingPic} />
+        <Image source={{uri: item.gambarPesanan}} style={styles.ratingPic} />
         <View style={styles.textContainer}>
           <Text style={styles.idPesanan}>{item.idPesanan}</Text>
           <Text style={styles.tanggalPesanan}>{item.tanggalPesanan}</Text>
@@ -26,31 +30,40 @@ const PenilaianScreens = () => {
   const [loading, setLoading] = useState(true);
   const [ratingData, setRatingData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const getDataRating = async () => {
-    try {
-      const response = await axios.get(
-        'https://656475e2ceac41c0761e3a27.mockapi.io/ffmobileapp/rating',
-      );
-      setRatingData(response.data);
-      setLoading(false)
-    } catch (error) {
-        console.error(error);
-    }
-  };
-
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('rating')
+      .onSnapshot(querySnapshot => {
+        const ratings = [];
+        querySnapshot.forEach(documentSnapshot => {
+          ratings.push({
+            ...documentSnapshot.data(),
+            id: documentSnapshot.id,
+          });
+        });
+        setRatingData(ratings);
+        setLoading(false);
+      });
+    return () => subscriber();
+  }, []);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      getDataRating()
+      firestore()
+        .collection('rating')
+        .onSnapshot(querySnapshot => {
+          const ratings = [];
+          querySnapshot.forEach(documentSnapshot => {
+            ratings.push({
+              ...documentSnapshot.data(),
+              id: documentSnapshot.id,
+            });
+          });
+          setRatingData(ratings);
+        });
       setRefreshing(false);
     }, 1500);
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      getDataRating();
-    }, [])
-  );
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -65,31 +78,30 @@ const PenilaianScreens = () => {
       </View>
 
       <ScrollView
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
+        }>
         {loading ? (
           <ActivityIndicator size="large" color="#3557e1" />
         ) : (
-          ratingData.map((item, index) => 
-            <RatingBox key={index} item={item}/>
-          )
+          ratingData.map((item, index) => <RatingBox key={index} item={item} />)
         )}
       </ScrollView>
     </View>
   );
-}
+};
 
 export default PenilaianScreens;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, flexDirection: 'column',
+    flex: 1,
+    flexDirection: 'column',
     backgroundColor: 'white',
   },
   header: {
-    height: 75,
+    height: 65,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

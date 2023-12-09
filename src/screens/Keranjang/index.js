@@ -16,9 +16,7 @@ const KeranjangScreens = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.textKeranjang}>Keranjang</Text>
-        </View>
+        <Text style={styles.textKeranjang}>Keranjang</Text>
         <View style={styles.notifIcon}>
           <TouchableOpacity style={styles.notifCircle}>
             <Notification size={30} color="black" variant="Linear" />

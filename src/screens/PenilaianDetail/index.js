@@ -1,15 +1,16 @@
-import React, {useState, useRef, useEffect, } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { ArrowLeft2, More } from 'iconsax-react-native';
-import { fontType } from '../../../theme';
+import React, {useState, useRef, useEffect} from 'react';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {ArrowLeft2, More} from 'iconsax-react-native';
+import {fontType} from '../../../theme';
 import {useNavigation} from '@react-navigation/native';
 import ActionSheet from 'react-native-actions-sheet';
-import axios from 'axios';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import FastImage from 'react-native-fast-image';
 
-const PenilaianDetail = ({ route }) => {
+const PenilaianDetail = ({route}) => {
   const navigation = useNavigation();
-  const { penilaianId } = route.params;
+  const {penilaianId} = route.params;
   const [loading, setLoading] = useState(true);
   const [ratingData, setRatingData] = useState(null);
   const actionSheetRef = useRef(null);
@@ -19,55 +20,74 @@ const PenilaianDetail = ({ route }) => {
   const closeActionSheet = () => {
     actionSheetRef.current?.hide();
   };
-  
-  useEffect(() => {
-    getPenilaianId();
-  }, [penilaianId]);
 
-  const getPenilaianId = async () => {
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('rating')
+      .doc(penilaianId)
+      .onSnapshot(documentSnapshot => {
+        const ratingData = documentSnapshot.data();
+        if (ratingData) {
+          console.log('rating data: ', ratingData);
+          setRatingData(ratingData);
+        } else {
+          console.log(`rating with ID ${penilaianId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
+  }, [penilaianId]);
+  const navigateEdit = () => {
+    closeActionSheet();
+    navigation.navigate('EditPenilaian', {penilaianId});
+  };
+  const handleDelete = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-        `https://656475e2ceac41c0761e3a27.mockapi.io/ffmobileapp/rating/${penilaianId}`,
-      );
-      setRatingData(response.data);
+      await firestore()
+        .collection('rating')
+        .doc(penilaianId)
+        .delete()
+        .then(() => {
+          console.log('rating deleted!');
+        });
+      if (selectedrating?.image) {
+        const imageRef = storage().refFromURL(selectedrating?.image);
+        await imageRef.delete();
+      }
+      console.log('rating deleted!');
+      closeActionSheet();
+      setRatingData(null);
       setLoading(false);
+      navigation.navigate('PenilaianScreens');
     } catch (error) {
       console.error(error);
     }
   };
-
-  const navigateEdit = () => {
-    closeActionSheet()
-    navigation.navigate('EditPenilaian', {penilaianId})
-  };
-
-  const handleDelete = async () => {
-   await axios.delete(`https://656475e2ceac41c0761e3a27.mockapi.io/ffmobileapp/rating/${penilaianId}`)
-      .then(() => {
-        closeActionSheet()
-        navigation.navigate('PenilaianScreens');
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.arrowLeftCircle} onPress={() => navigation.navigate('PenilaianScreens')}>
+        <TouchableOpacity
+          style={styles.arrowLeftCircle}
+          onPress={() => navigation.navigate('PenilaianScreens')}>
           <ArrowLeft2 color="black" variant="Linear" />
         </TouchableOpacity>
         <View>
-          <Text style={styles.textDetail}>Detail Pesanan</Text>
+          <Text style={styles.textDetail}>Detail Penilaian</Text>
         </View>
         <View style={styles.notifIcon}>
-          <TouchableOpacity style={styles.notifCircle} onPress={openActionSheet}>
+          <TouchableOpacity
+            style={styles.notifCircle}
+            onPress={openActionSheet}>
             <More size={30} color="black" variant="Linear" />
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.contentContainer}>
-        <FastImage source={{ uri: ratingData?.gambarPesanan }} style={styles.ratingPic} />
+        <FastImage
+          source={{uri: ratingData?.gambarPesanan}}
+          style={styles.ratingPic}
+        />
         <View style={styles.textContainer}>
           <Text style={styles.detailText}>{`ID Pesanan: ${ratingData?.idPesanan}`}</Text>
           <Text style={styles.detailText}>{`Tanggal Pesanan: ${ratingData?.tanggalPesanan}`}</Text>
@@ -75,14 +95,32 @@ const PenilaianDetail = ({ route }) => {
           <Text style={styles.detailText}>{`Paket Promo: ${ratingData?.paketPromoText}`}</Text>
         </View>
       </View>
-      <View style={styles.textRating}>
-        <Text style={styles.detailText}>{`Rasa: ${ratingData?.rasa}`}</Text>
-        <Text style={styles.detailText}>{`Pelayanan: ${ratingData?.pelayanan}`}</Text>
-        <Text style={styles.detailText}>{`Kepuasan: ${ratingData?.kepuasan}`}</Text>
-        <Text style={styles.detailText}>{`Kenyamanan: ${ratingData?.kenyamanan}`}</Text>
+      <View style={styles.containerTitleRating}>
+        <Text style={styles.titleRatingText}>Rasa</Text>
+      </View>
+      <View style={styles.containerDescription}>
+        <Text style={styles.descriptionText}>{ratingData?.rasa}</Text>
+      </View>
+      <View style={styles.containerTitleRating}>
+        <Text style={styles.titleRatingText}>Pelayanan</Text>
+      </View>
+      <View style={styles.containerDescription}>
+        <Text style={styles.descriptionText}>{ratingData?.pelayanan}</Text>
+      </View>
+      <View style={styles.containerTitleRating}>
+        <Text style={styles.titleRatingText}>Kepuasan</Text>
+      </View>
+      <View style={styles.containerDescription}>
+        <Text style={styles.descriptionText}>{ratingData?.kepuasan}</Text>
+      </View>
+      <View style={styles.containerTitleRating}>
+        <Text style={styles.titleRatingText}>Kenyamanan</Text>
+      </View>
+      <View style={styles.containerDescription}>
+        <Text style={styles.descriptionText}>{ratingData?.kenyamanan}</Text>
       </View>
       <View style={styles.gambarRating}>
-        <FastImage source={{ uri: ratingData?.image }} style={styles.ratingPic} />
+        <FastImage source={{uri: ratingData?.image}} style={styles.ratingPic} />
       </View>
       <ActionSheet
         ref={actionSheetRef}
@@ -101,11 +139,10 @@ const PenilaianDetail = ({ route }) => {
             alignItems: 'center',
             paddingVertical: 15,
           }}
-          onPress={navigateEdit}
-          >
+          onPress={navigateEdit}>
           <Text
             style={{
-              color: "#000",
+              color: '#000',
               fontSize: 18,
             }}>
             Edit
@@ -120,7 +157,7 @@ const PenilaianDetail = ({ route }) => {
           onPress={handleDelete}>
           <Text
             style={{
-              color: "#000",
+              color: '#000',
               fontSize: 18,
             }}>
             Delete
@@ -197,8 +234,8 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection: 'row',
     margin: 15,
-    backgroundColor: "#eee",
-    borderRadius : 10,
+    backgroundColor: '#eee',
+    borderRadius: 10,
   },
   ratingPic: {
     backgroundColor: '#eee',
@@ -212,17 +249,36 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     alignItems: 'flex-start',
   },
-  textRating: {
+  containerTitleRating: {
+    borderBottomWidth: 0.2,
+    borderTopWidth: 0.8,
+    borderColor: "#000",
     marginHorizontal: 15,
-    alignItems: 'flex-start',
+  },
+  containerDescription: {
+    borderBottomWidth: 0.8,
+    borderColor: "#000",
+    marginHorizontal: 15,
+    height: 50,
   },
   detailText: {
     fontSize: 16,
     color: 'black',
     marginVertical: 5,
   },
-  gambarRating:{
-    margin: 10,
+  gambarRating: {
+    margin: 15,
+  },
+  titleRatingText: {
+    fontSize: 22,
+    fontFamily: fontType['Monday-Ramen'],
+    paddingHorizontal: 8,
+    marginTop: 10,
+  },
+  descriptionText: {
+    fontSize: 18,
+    paddingHorizontal: 8,
+    marginTop: 10,
   },
 });
 
