@@ -1,9 +1,9 @@
 import React, {useState, useRef} from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, FlatList, TouchableWithoutFeedback, TouchableOpacity, Animated } from 'react-native';
-import { Notification, SearchNormal1 } from 'iconsax-react-native';
+import { Profile, SearchNormal1 } from 'iconsax-react-native';
 import { menuData, images, paketAYCE } from '../../../data';
 import ImagesComponent from '../../components/images';
-import {PaketAYCE} from '../../components';
+import {PaketAYCE, ProfileComp} from '../../components';
 import { fontType } from '../../../theme';
 import {useNavigation} from '@react-navigation/native';
 
@@ -93,11 +93,7 @@ const HomeScreens = () => {
             <Text style={styles.input}>Cari ... </Text>
           </View>
         </TouchableWithoutFeedback>
-        <View style={styles.notifIcon}>
-          <TouchableOpacity style={styles.notifCircle}>
-            <Notification size={30} color="black" variant="Linear" />
-          </TouchableOpacity>
-        </View>
+        <ProfileComp/>
       </Animated.View>
 
       <Animated.View style={{ marginTop: flatListPosition }}>

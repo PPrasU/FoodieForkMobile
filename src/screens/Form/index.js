@@ -7,6 +7,7 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import FlashMessage, {showMessage} from 'react-native-flash-message';
 import {ArrowLeft, AddSquare, Add} from 'iconsax-react-native';
@@ -16,7 +17,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-
+import auth from '@react-native-firebase/auth';
 
 const Header = () => {
   const navigation = useNavigation();
@@ -106,6 +107,7 @@ const MainContent = () => {
 
     setLoading(true);
     try {
+      const authorId = auth().currentUser.uid;
       await reference.putFile(image);
       const url = await reference.getDownloadURL();
       await firestore().collection('rating').add({
@@ -119,6 +121,7 @@ const MainContent = () => {
         hargaText: selectedItem.hargaText,
         paketPromoText: selectedItem.paketPromoText,
         gambarPesanan: selectedItem.imageMenu,
+        authorId,
       });
       setLoading(false);
       console.log('Berhasil Melakukan Penilaian!');
@@ -142,126 +145,140 @@ const MainContent = () => {
       });
   };
   return (
-    <View style={styles.mainContent}>
-      <View style={styles.ratingContent}>
-        <View style={styles.ratingInfo}>
-          <Image
-            source={{uri: selectedItem.imageMenu}}
-            style={styles.ratingPic}
-          />
-          <View style={styles.textContainer}>
-            <Text style={styles.idPesanan}>{selectedItem.idPesanan}</Text>
-            <Text style={styles.tanggalPesanan}>
-              {selectedItem.tanggalPesanan}
-            </Text>
-            <Text style={styles.hargaText}>{selectedItem.hargaText}</Text>
-          </View>
-        </View>
-        <Text style={styles.paketPromoText}>{selectedItem.paketPromoText}</Text>
-      </View>
-      <ScrollView>
-        <Text style={RatingStyle.titleRating}>Rasa</Text>
-        <View style={RatingStyle.textInput}>
-          <TextInput
-            placeholder="Deskripsikan rasa dari makanan tersebut ..."
-            value={ratingData.rasa}
-            onChangeText={text => handleChange('rasa', text)}
-            placeholderTextColor="#8a8a8a"
-            borderWidth={0}
-            underlineColorAndroid="transparent"
-          />
-        </View>
-        <Text style={RatingStyle.titleRating}>Pelayanan</Text>
-        <View style={RatingStyle.textInput}>
-          <TextInput
-            placeholder="Deskripsikan pelayanan dari makanan tersebut ..."
-            value={ratingData.pelayanan}
-            onChangeText={text => handleChange('pelayanan', text)}
-            placeholderTextColor="#8a8a8a"
-            borderWidth={0}
-            underlineColorAndroid="transparent"
-          />
-        </View>
-        <Text style={RatingStyle.titleRating}>Kepuasan</Text>
-        <View style={RatingStyle.textInput}>
-          <TextInput
-            placeholder="Deskripsikan kepuasan dari makanan tersebut ..."
-            value={ratingData.kepuasan}
-            onChangeText={text => handleChange('kepuasan', text)}
-            placeholderTextColor="#8a8a8a"
-            borderWidth={0}
-            underlineColorAndroid="transparent"
-          />
-        </View>
-        <Text style={RatingStyle.titleRating}>Kenyamanan</Text>
-        <View style={RatingStyle.textInput}>
-          <TextInput
-            placeholder="Deskripsikan kenyamanan dari makanan tersebut ..."
-            value={ratingData.kenyamanan}
-            onChangeText={text => handleChange('kenyamanan', text)}
-            placeholderTextColor="#8a8a8a"
-            borderWidth={0}
-            underlineColorAndroid="transparent"
-          />
-        </View>
-        {image ? (
-          <View style={{position: 'relative', marginVertical: 20, marginHorizontal: 10,}}>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      enabled>
+      <View style={styles.mainContent}>
+        <View style={styles.ratingContent}>
+          <View style={styles.ratingInfo}>
             <Image
-              style={{width: '100%', height: 165, borderRadius: 5}}
-              source={{
-                uri: image,
-              }}
+              source={{uri: selectedItem.imageMenu}}
+              style={styles.ratingPic}
             />
-            <TouchableOpacity
-              style={{
-                position: 'absolute',
-                top: -5,
-                right: -5,
-                backgroundColor: "#b3b3b3",
-                borderRadius: 25,
-              }}
-              onPress={() => setImage(null)}>
-              <Add
-                size={20}
-                variant="Linear"
-                color="#000"
-                style={{transform: [{rotate: '45deg'}]}}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity onPress={handleImagePenilaian}>
-            <View
-              style={[
-                styles.borderImagePenilaian,
-                {
-                  gap: 10,
-                  paddingVertical: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                },
-              ]}>
-              <AddSquare color="#000" variant="Linear" size={42} />
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: "#000",
-                }}>
-                Masukkan Gambar
+            <View style={styles.textContainer}>
+              <Text style={styles.idPesanan}>{selectedItem.idPesanan}</Text>
+              <Text style={styles.tanggalPesanan}>
+                {selectedItem.tanggalPesanan}
               </Text>
+              <Text style={styles.hargaText}>{selectedItem.hargaText}</Text>
             </View>
-          </TouchableOpacity>
-        )}
-        {loading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#3557e1" />
           </View>
-        )}
-      </ScrollView>
-      <TouchableOpacity style={styles.button} onPress={() => postDataToFirebase()}>
-        <Text style={styles.buttonText}>Nilai</Text>
-      </TouchableOpacity>
-    </View>
+          <Text style={styles.paketPromoText}>
+            {selectedItem.paketPromoText}
+          </Text>
+        </View>
+        <ScrollView>
+          <Text style={RatingStyle.titleRating}>Rasa</Text>
+          <View style={RatingStyle.textInput}>
+            <TextInput
+              placeholder="Deskripsikan rasa dari makanan tersebut ..."
+              value={ratingData.rasa}
+              onChangeText={text => handleChange('rasa', text)}
+              placeholderTextColor="#8a8a8a"
+              borderWidth={0}
+              underlineColorAndroid="transparent"
+            />
+          </View>
+          <Text style={RatingStyle.titleRating}>Pelayanan</Text>
+          <View style={RatingStyle.textInput}>
+            <TextInput
+              placeholder="Deskripsikan pelayanan dari makanan tersebut ..."
+              value={ratingData.pelayanan}
+              onChangeText={text => handleChange('pelayanan', text)}
+              placeholderTextColor="#8a8a8a"
+              borderWidth={0}
+              underlineColorAndroid="transparent"
+            />
+          </View>
+          <Text style={RatingStyle.titleRating}>Kepuasan</Text>
+          <View style={RatingStyle.textInput}>
+            <TextInput
+              placeholder="Deskripsikan kepuasan dari makanan tersebut ..."
+              value={ratingData.kepuasan}
+              onChangeText={text => handleChange('kepuasan', text)}
+              placeholderTextColor="#8a8a8a"
+              borderWidth={0}
+              underlineColorAndroid="transparent"
+            />
+          </View>
+          <Text style={RatingStyle.titleRating}>Kenyamanan</Text>
+          <View style={RatingStyle.textInput}>
+            <TextInput
+              placeholder="Deskripsikan kenyamanan dari makanan tersebut ..."
+              value={ratingData.kenyamanan}
+              onChangeText={text => handleChange('kenyamanan', text)}
+              placeholderTextColor="#8a8a8a"
+              borderWidth={0}
+              underlineColorAndroid="transparent"
+            />
+          </View>
+          {image ? (
+            <View
+              style={{
+                position: 'relative',
+                marginVertical: 20,
+                marginHorizontal: 10,
+              }}>
+              <Image
+                style={{width: '100%', height: 165, borderRadius: 5}}
+                source={{
+                  uri: image,
+                }}
+              />
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  top: -5,
+                  right: -5,
+                  backgroundColor: '#b3b3b3',
+                  borderRadius: 25,
+                }}
+                onPress={() => setImage(null)}>
+                <Add
+                  size={20}
+                  variant="Linear"
+                  color="#000"
+                  style={{transform: [{rotate: '45deg'}]}}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={handleImagePenilaian}>
+              <View
+                style={[
+                  styles.borderImagePenilaian,
+                  {
+                    gap: 10,
+                    paddingVertical: 30,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  },
+                ]}>
+                <AddSquare color="#000" variant="Linear" size={42} />
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: '#000',
+                  }}>
+                  Masukkan Gambar
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          {loading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#3557e1" />
+            </View>
+          )}
+        </ScrollView>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => postDataToFirebase()}>
+          <Text style={styles.buttonText}>Nilai</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -287,7 +304,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: '#A9A9A9',
     paddingBottom: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   mainContent: {
     paddingHorizontal: 10,
@@ -392,7 +409,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     borderWidth: 1,
-    borderColor: "#000",
+    borderColor: '#000',
     marginVertical: 20,
     marginHorizontal: 10,
   },

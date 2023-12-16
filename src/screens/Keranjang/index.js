@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, } from 'react-native';
-import { Notification, TicketDiscount,  } from 'iconsax-react-native';
+import { Profile, TicketDiscount,  } from 'iconsax-react-native';
 import { fontType } from '../../../theme';
 import { items } from './data';
+import { ProfileComp } from '../../components';
 import {useNavigation} from '@react-navigation/native';
 
 const KeranjangScreens = () => {
@@ -17,11 +18,7 @@ const KeranjangScreens = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.textKeranjang}>Keranjang</Text>
-        <View style={styles.notifIcon}>
-          <TouchableOpacity style={styles.notifCircle}>
-            <Notification size={30} color="black" variant="Linear" />
-          </TouchableOpacity>
-        </View>
+        <ProfileComp/>
       </View>
 
       <ScrollView contentContainerStyle={styles.mainContent}>

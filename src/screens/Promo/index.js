@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { Notification, Home, TicketDiscount, ShoppingCart, Archive, User } from 'iconsax-react-native';
+import { Profile} from 'iconsax-react-native';
 import { fontType } from '../../../theme';
+import { ProfileComp } from '../../components';
 
 const PromoScreens = () => {
     const [focusedIcon, setFocusedIcon] = useState('home');
@@ -15,11 +16,7 @@ const PromoScreens = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.textPromo}>Daftar Promo & Kupon</Text>
-        <View style={styles.notifIcon}>
-          <TouchableOpacity style={styles.notifCircle}>
-            <Notification size={30} color="black" variant="Linear" />
-          </TouchableOpacity>
-        </View>
+        <ProfileComp/>
       </View>
 
       <ScrollView contentContainerStyle={styles.mainContent}>

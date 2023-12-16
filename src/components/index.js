@@ -1,3 +1,4 @@
 import PaketAYCE from './PaketAYCE'
 import SearchContainer from './SearchContainer'
-export {PaketAYCE, SearchContainer}
+import ProfileComp from './profile'
+export {PaketAYCE, SearchContainer, ProfileComp}

@@ -89,39 +89,49 @@ const PenilaianDetail = ({route}) => {
           style={styles.ratingPic}
         />
         <View style={styles.textContainer}>
-          <Text style={styles.detailText}>{`ID Pesanan: ${ratingData?.idPesanan}`}</Text>
-          <Text style={styles.detailText}>{`Tanggal Pesanan: ${ratingData?.tanggalPesanan}`}</Text>
-          <Text style={styles.detailText}>{`Harga: ${ratingData?.hargaText}`}</Text>
-          <Text style={styles.detailText}>{`Paket Promo: ${ratingData?.paketPromoText}`}</Text>
+          <Text
+            style={
+              styles.detailText
+            }>{`ID Pesanan: ${ratingData?.idPesanan}`}</Text>
+          <Text
+            style={
+              styles.detailText
+            }>{`Tanggal Pesanan: ${ratingData?.tanggalPesanan}`}</Text>
+          <Text
+            style={styles.detailText}>{`Harga: ${ratingData?.hargaText}`}</Text>
+          <Text
+            style={
+              styles.detailText
+            }>{`Paket Promo: ${ratingData?.paketPromoText}`}</Text>
         </View>
       </View>
-      <View style={styles.containerTitleRating}>
-        <Text style={styles.titleRatingText}>Rasa</Text>
-      </View>
-      <View style={styles.containerDescription}>
-        <Text style={styles.descriptionText}>{ratingData?.rasa}</Text>
-      </View>
-      <View style={styles.containerTitleRating}>
-        <Text style={styles.titleRatingText}>Pelayanan</Text>
-      </View>
-      <View style={styles.containerDescription}>
-        <Text style={styles.descriptionText}>{ratingData?.pelayanan}</Text>
-      </View>
-      <View style={styles.containerTitleRating}>
-        <Text style={styles.titleRatingText}>Kepuasan</Text>
-      </View>
-      <View style={styles.containerDescription}>
-        <Text style={styles.descriptionText}>{ratingData?.kepuasan}</Text>
-      </View>
-      <View style={styles.containerTitleRating}>
-        <Text style={styles.titleRatingText}>Kenyamanan</Text>
-      </View>
-      <View style={styles.containerDescription}>
-        <Text style={styles.descriptionText}>{ratingData?.kenyamanan}</Text>
-      </View>
-      <View style={styles.gambarRating}>
-        <FastImage source={{uri: ratingData?.image}} style={styles.ratingPic} />
-      </View>
+<View style={styles.containerTitleRating}>
+  <Text style={styles.titleRatingText}>Rasa</Text>
+</View>
+<View style={styles.containerDescription}>
+  <Text style={styles.descriptionText}>{ratingData?.rasa}</Text>
+</View>
+<View style={styles.containerTitleRating}>
+  <Text style={styles.titleRatingText}>Pelayanan</Text>
+</View>
+<View style={styles.containerDescription}>
+  <Text style={styles.descriptionText}>{ratingData?.pelayanan}</Text>
+</View>
+<View style={styles.containerTitleRating}>
+  <Text style={styles.titleRatingText}>Kepuasan</Text>
+</View>
+<View style={styles.containerDescription}>
+  <Text style={styles.descriptionText}>{ratingData?.kepuasan}</Text>
+</View>
+<View style={styles.containerTitleRating}>
+  <Text style={styles.titleRatingText}>Kenyamanan</Text>
+</View>
+<View style={styles.containerDescription}>
+  <Text style={styles.descriptionText}>{ratingData?.kenyamanan}</Text>
+</View>
+<View style={styles.gambarRating}>
+  <FastImage source={{uri: ratingData?.image}} style={styles.ratingPic} />
+</View>
       <ActionSheet
         ref={actionSheetRef}
         containerStyle={{
@@ -252,12 +262,12 @@ const styles = StyleSheet.create({
   containerTitleRating: {
     borderBottomWidth: 0.2,
     borderTopWidth: 0.8,
-    borderColor: "#000",
+    borderColor: '#000',
     marginHorizontal: 15,
   },
   containerDescription: {
     borderBottomWidth: 0.8,
-    borderColor: "#000",
+    borderColor: '#000',
     marginHorizontal: 15,
     height: 50,
   },

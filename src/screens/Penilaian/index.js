@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import {ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl, Image,} from 'react-native';
-import {Notification} from 'iconsax-react-native';
+import { ProfileComp } from '../../components';
 import {fontType} from '../../../theme';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
@@ -70,11 +70,7 @@ const PenilaianScreens = () => {
         <View>
           <Text style={styles.textPenilaian}>Penilaian</Text>
         </View>
-        <View style={styles.notifIcon}>
-          <TouchableOpacity style={styles.notifCircle}>
-            <Notification size={30} color="black" variant="Linear" />
-          </TouchableOpacity>
-        </View>
+        <ProfileComp/>
       </View>
 
       <ScrollView
