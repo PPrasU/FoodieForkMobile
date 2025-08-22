@@ -1,79 +1,39 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# FoodieFork Mobile: Restaurant Ordering Android App
 
-# Getting Started
+This project is a **React Native Android application** designed for **FoodieFork restaurant**, allowing users to browse menus and place food orders directly through the app. The user interface (UI) was custom-designed to provide a smooth and interactive experience.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+![Landing Page](assets/pictures/LP.png)
 
-## Step 1: Start the Metro Server
+---
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## 🚀 Features
+- **Custom-designed UI** for intuitive navigation and ordering experience.  
+- **User Authentication** using **Firebase Authentication** (email/password, Google login, etc.).  
+- **Promo menu**: access coupons and special meal packages (including all-you-can-eat options).  
+- **Ordering and payment**: users can place orders and pay directly within the app.  
+- **Ratings and reviews**: provide feedback on previously ordered food.  
+- **Favorites / Bookmarks**: save preferred dishes for quick access.  
+- Real-time menu and promo updates.  
 
-To start Metro, run the following command from the _root_ of your React Native project:
+---
 
-```bash
-# using npm
-npm start
+## 🛠️ Tech Stack
+- **Framework**: React Native  
+- **Platform**: Android  
+- **Programming Language**: JavaScript / TypeScript  
+- **Authentication**: Firebase Authentication  
+- **UI Design**: Custom React Native components and layouts  
+- **Minimum Android Version**: 13 (during development)  
+- **Other Tools**: SQLite / Realm for local storage, REST API integration for backend services  
 
-# OR using Yarn
-yarn start
-```
+---
 
-## Step 2: Start your Application
+## 📊 System Workflow
+1. User opens the app and logs in via **Firebase Authentication**.  
+2. Users browse the menu and view **promotions and meal packages**, then select items to order.  
+3. Orders can be **paid directly** in-app.  
+4. Users can **rate and review** their previous orders.  
+5. Users can **bookmark or favorite** menu items for future orders.  
+6. App synchronizes with backend for promotions, menu updates, and order processing in real-time.  
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+---
